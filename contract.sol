@@ -35,11 +35,13 @@ contract ProposalContract {
         _;
     }
 
-    modifier  newVoter(address _address){
-        require(!isVoted(address) , "Address has already voted!");
+     modifier  newVoter(address _address){
+        require(!isVoted(_address) , "Address has already voted!");
         _;
     }
 
+    
+    
      function setOwner(address new_owner) external OnlyOwner{
         owner = new_owner;
     }
@@ -61,16 +63,16 @@ contract ProposalContract {
 
         if(choice == 1){
             proposal.approve += 1;
-            proposal.current_State = calculateCurrentState();
+             proposal.current_state = calculateCurrentState();
         }
         else if(choice == 2){
             proposal.reject += 1;
-            proposal.current_State = calculateCurrentState();
+            proposal.current_state = calculateCurrentState();
         }
         
         else if(choice == 0){
             proposal.pass += 1;
-            proposal.current_State = calculateCurrentState();
+            proposal.current_state = calculateCurrentState();
         }
 
         if((proposal.total_vote_to_end - total_vote == 1 )&& (choice == 1 || choice == 2 || choice ==0) ){
@@ -108,7 +110,36 @@ contract ProposalContract {
 
         }
 
+        function terminateProposal() external OnlyOwner active{
+            proposal_history[counter].is_active = false;
+        }
+
+        
+        function isVoted(address _address)public view returns(bool){
+            for(uint i =0;i<voted_address.length;i++){
+               if(voted_address[i] == _address){
+                return true;
+               }
+            }
+            return false;
+        }
+
+
+        function getCurrentProposal() external view returns(Proposal memory){
+            return proposal_history[counter];
+        }
+
+        function getProposal(uint256 number) external  view returns(Proposal memory){
+            return proposal_history[number];
+        }
+        
+
 
 
     }
+
+
+
+
+
 
